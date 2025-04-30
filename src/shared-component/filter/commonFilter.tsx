@@ -2,7 +2,7 @@ import { EuiButton } from "@elastic/eui";
 import React from "react";
 
 interface CommonFilterProps {
-  color:
+  color?:
     | "primary"
     | "text"
     | "accent"
@@ -12,13 +12,15 @@ interface CommonFilterProps {
     | "warning"
     | "risk"
     | "danger";
-  title : string;
+  onClick? : any;
+  type? : "button" | "reset" | "submit";
+  title? : string;
 }
 
-export const CommonFilter: React.FC<CommonFilterProps> = ({ color , title }) => {
+export const CommonFilter: React.FC<CommonFilterProps> = ({ color , title, onClick, type }) => {
   return (
     <>
-      <EuiButton color={color}>
+      <EuiButton color={color} onClick={onClick} type={type}>
         {title}
       </EuiButton>
     </>
