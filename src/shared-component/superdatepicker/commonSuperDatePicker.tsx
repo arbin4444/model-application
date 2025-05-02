@@ -19,6 +19,7 @@ export const CommonSuperDatePicker:React.FC<CommonSuperDatePickerProps>=({
     return(
         <>
         <EuiSuperDatePicker
+        className='superdatepicker'
             isLoading={isLoading}
             start={start}
             end={end}

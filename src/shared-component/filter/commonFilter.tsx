@@ -19,10 +19,11 @@ interface CommonFilterProps {
 
 export const CommonFilter: React.FC<CommonFilterProps> = ({ color , title, onClick, type }) => {
   return (
-    <>
+    <div className="common-button">
       <EuiButton color={color} onClick={onClick} type={type}>
         {title}
       </EuiButton>
-    </>
+    </div>
   );
 };
+

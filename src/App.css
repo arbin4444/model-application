@@ -36,3 +36,11 @@
     transform: rotate(360deg);
   }
 } */
+
+.main-div, css-kz3qdw-euiFlexGroup-l-flexStart-stretch-column{
+  margin: 50px 250px 50px 250px;
+}
+
+ .common-button .css-aqnt06-euiButtonDisplay-m-defaultMinWidth-base-primary{
+  border-radius: 10px;
+ }

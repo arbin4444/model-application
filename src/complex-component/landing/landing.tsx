@@ -1,13 +1,12 @@
 import {
-  EuiBasicTable,
+  Criteria,
   EuiBasicTableColumn,
-  EuiButton,
   EuiButtonEmpty,
   EuiFlexGroup,
   EuiFlexItem,
   EuiIcon,
   EuiPopover,
-  EuiText,
+  EuiSpacer,
   OnRefreshProps,
   OnTimeChangeProps,
 } from "@elastic/eui";
@@ -15,6 +14,7 @@ import React, { useState } from "react";
 import { CommonSearchField } from "../../shared-component/search-field/commonSearchField";
 import { CommonSuperDatePicker } from "../../shared-component/superdatepicker/commonSuperDatePicker";
 import { CommonFilter } from "../../shared-component/filter/commonFilter";
+import { CommonTable } from "../../shared-component/table/commonTable";
 export interface User {
   sn: number;
   name: string;
@@ -28,14 +28,11 @@ export const Landing: React.FC = () => {
   const [start, setStart] = useState("now-30m");
   const [end, setEnd] = useState("now");
 
-  const [isPopoverOpen, setIsPopoverOpen] = useState<number|null>(null);
- 
+  const [openPopoverId, setOpenPopoverId] = useState<number | null>(null);
 
-  const onButtonClick = (sn:number) =>
-    setIsPopoverOpen((prevSn) => (prevSn === sn ? null : sn));
-  const closePopover = () => setIsPopoverOpen(null);
-
-  // const button = <EuiIcon type="boxesHorizontal" onClick={()=>onButtonClick(1)} />;
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageSize, setPageSize] = useState(4);
+  const [showPerPageOptions, setShowPerPageOptions] = useState(true);
 
   const users = [
     {
@@ -51,6 +48,41 @@ export const Landing: React.FC = () => {
       version: "V 0.1",
       createdBy: "Hemanta Adhikari",
       createdAt: "2025/04/30",
+    },
+    {
+      sn: 3,
+      name: "Test 3",
+      version: "V 0.1",
+      createdBy: "Hemanta Adhikari",
+      createdAt: "2025/04/30",
+    },
+    {
+      sn: 4,
+      name: "Test 4",
+      version: "V 0.1",
+      createdBy: "Hemanta Adhikari",
+      createdAt: "2025/04/30",
+    },
+    {
+      sn: 5,
+      name: "Test 5",
+      version: "V 0.1",
+      createdBy: "Hemanta Adhikari",
+      createdAt: "2025/04/30",
+    },
+    {
+      sn: 6,
+      name: "Test 6",
+      version: "V 0.1",
+      createdBy: "Hemanta Adhikari",
+      createdAt: "2025/04/30",
+    },
+    {
+      sn: 7,
+      name: "Test 7",
+      version: "V 0.0.1",
+      createdBy: "Shikha Kandel",
+      createdAt: "2025/04/15",
     },
   ];
 
@@ -102,72 +134,116 @@ export const Landing: React.FC = () => {
       render: (createdAt: string) => <>{createdAt}</>,
     },
     {
-      field: "action",
       name: "Action",
-      render: (sn:number) => {
-        const button = <EuiIcon type="boxesHorizontal" onClick={()=>onButtonClick(sn)} />;
+      render: (item: User) => {
+        const isOpen = openPopoverId === item.sn;
+        const onButtonClick = () => {
+          setOpenPopoverId(isOpen ? null : item.sn);
+        };
+        const closePopover = () => setOpenPopoverId(null);
+        const button = (
+          <EuiIcon type="boxesHorizontal" onClick={onButtonClick} />
+        );
+
         return (
           <>
             <EuiPopover
               button={button}
-              isOpen={isPopoverOpen===sn}
+              isOpen={isOpen}
               closePopover={closePopover}
             >
-              <EuiIcon type="trash" />
-              <EuiIcon type="pencil" />
+              <EuiFlexGroup>
+                <EuiFlexItem>
+                  <EuiButtonEmpty iconType="pencil">Edit</EuiButtonEmpty>
+                </EuiFlexItem>
+                <EuiFlexItem>
+                  <EuiButtonEmpty iconType="trash" color="danger">
+                    Delete
+                  </EuiButtonEmpty>
+                </EuiFlexItem>
+              </EuiFlexGroup>
             </EuiPopover>
           </>
         );
       },
-      // actions: [
-      //   {
-      //     name : "Actions",
-      //     description : "click this for action",
-      //     icon : "boxesHorizontal",
-      //     type : "icon",
-      //     onClick : (item :User)=>{
-      //       console.log("perform action",item)
-      //     }
-      //   }
-      // ]
     },
   ];
+
+  //Pagination
+  const onTableChange = ({ page }: Criteria<User>) => {
+    if (page) {
+      const { index: pageIndex, size: pageSize } = page;
+      setPageIndex(pageIndex);
+      setPageSize(pageSize);
+    }
+  };
+
+  const findUsers = (users: User[], pageIndex: number, pageSize: number) => {
+    let pageOfItems;
+
+    if (!pageIndex && !pageSize) {
+      pageOfItems = users;
+    } else {
+      const startIndex = pageIndex * pageSize;
+      pageOfItems = users.slice(
+        startIndex,
+        Math.min(startIndex + pageSize, users.length)
+      );
+    }
+    return {
+      pageOfItems,
+      totalItemCount: users.length,
+    };
+  };
+  const { pageOfItems, totalItemCount } = findUsers(users, pageIndex, pageSize);
+
+  const pagination = {
+    pageIndex,
+    pageSize,
+    totalItemCount,
+    pageSizeOptions: [10, 0],
+    showPerPageOptions,
+  };
   return (
     <>
-      <EuiFlexGroup>
+      <EuiFlexGroup direction="column" className="main-div">
+        <EuiFlexGroup>
+          <EuiFlexGroup>
+            <EuiFlexItem>
+              <CommonSearchField placeholder="Enter your Data" />
+            </EuiFlexItem>
+          </EuiFlexGroup>
+          <EuiFlexGroup justifyContent="flexEnd">
+            <EuiFlexItem grow={false}>
+              <CommonSuperDatePicker
+                isLoading={isLoading}
+                start={start}
+                end={end}
+                onTimeChange={onTimeChange}
+                onRefresh={onRefresh}
+              />
+            </EuiFlexItem>
+            <EuiFlexItem grow={false}>
+              <div>
+                <CommonFilter color="primary" title="Filter" />
+              </div>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        </EuiFlexGroup>
         <EuiFlexGroup>
           <EuiFlexItem>
-            <CommonSearchField placeholder="Enter your Data" />
-          </EuiFlexItem>
-        </EuiFlexGroup>
-        <EuiFlexGroup>
-          <EuiFlexItem grow={false}>
-            <CommonSuperDatePicker
-              isLoading={isLoading}
-              start={start}
-              end={end}
-              onTimeChange={onTimeChange}
-              onRefresh={onRefresh}
+            <CommonTable
+              tableCaption="Model Table"
+              responsiveBreakpoint={false}
+              items={pageOfItems}
+              itemId="id"
+              rowHeader="name"
+              columns={columns}
+              onChange={onTableChange}
+              pagination={pagination}
             />
           </EuiFlexItem>
-          <EuiFlexItem grow={false}>
-            <div>
-              <CommonFilter color="primary" title="Filter" />
-            </div>
-          </EuiFlexItem>
         </EuiFlexGroup>
-      </EuiFlexGroup>
-      <EuiFlexGroup>
-        <EuiFlexItem>
-          <EuiBasicTable
-            tableCaption="Model Table"
-            responsiveBreakpoint={false}
-            items={users}
-            itemId="id"
-            rowHeader="name"
-            columns={columns}
-          />
-        </EuiFlexItem>
       </EuiFlexGroup>
     </>
   );
