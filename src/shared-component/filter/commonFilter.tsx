@@ -12,12 +12,17 @@ interface CommonFilterProps {
     | "warning"
     | "risk"
     | "danger";
-  onClick? : any;
-  type? : "button" | "reset" | "submit";
-  title? : string;
+  onClick?: any;
+  type?: "button" | "reset" | "submit";
+  title?: string;
 }
 
-export const CommonFilter: React.FC<CommonFilterProps> = ({ color , title, onClick, type }) => {
+export const CommonFilter: React.FC<CommonFilterProps> = ({
+  color,
+  title,
+  onClick,
+  type,
+}) => {
   return (
     <div className="common-button">
       <EuiButton color={color} onClick={onClick} type={type}>
@@ -26,4 +31,3 @@ export const CommonFilter: React.FC<CommonFilterProps> = ({ color , title, onCli
     </div>
   );
 };
-

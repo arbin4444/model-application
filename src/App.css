@@ -37,10 +37,44 @@
   }
 } */
 
-.main-div, css-kz3qdw-euiFlexGroup-l-flexStart-stretch-column{
-  margin: 50px 250px 50px 250px;
+.main-div,
+css-kz3qdw-euiFlexGroup-l-flexStart-stretch-column {
+  margin: 50px 100px 50px 100px;
 }
 
- .common-button .css-aqnt06-euiButtonDisplay-m-defaultMinWidth-base-primary{
+.common-button .css-aqnt06-euiButtonDisplay-m-defaultMinWidth-base-primary {
   border-radius: 10px;
- }
+  box-shadow: 0px 0px 6px rgba(0 ,0 ,0 ,0.15);
+  border-color: transparent;
+}
+
+.common-searchField .css-ins9b-euiFieldSearch {
+  border-radius: 10px;
+  box-shadow: 0px 0px 6px rgba(0 ,0 ,0 ,0.15);
+  border-color: transparent;
+}
+.top-div,
+css-1drqwgc-euiFlexGroup-responsive-l-flexStart-stretch-row {
+  margin: 25px 0px 25px 0px;
+}
+
+.common-superDatePicker
+  .css-1fj0km3-euiFormControlLayout-fullWidth-group-euiSuperDatePicker__formControlLayout-default {
+  border-radius: 10px;
+  box-shadow: 0px 0px 6px rgba(0 ,0 ,0 ,0.15);
+  border-color: transparent;
+}
+.common-superDatePicker .css-1wfkn4o-euiButtonDisplay-m-fill-primary {
+  border-radius: 10px;
+  box-shadow: 0px 0px 6px rgba(0 ,0 ,0 ,0.15);
+  border-color: transparent;
+  background-color: rgb(255, 84, 10);
+}
+.common-table .css-1d6gd2z-euiTable-fixed-uncompressed-desktop{
+  border-radius: 10px;
+  box-shadow: 0px 0px 6px rgba(0 ,0 ,0 ,0.15);
+  border-color: transparent;
+}
+.common-table .css-ykrjwq-euiTableCellContent-euiTableHeaderCell__content{
+  margin : 10px 0px 10px 0px;
+}

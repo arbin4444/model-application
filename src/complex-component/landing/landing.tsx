@@ -4,11 +4,17 @@ import {
   EuiButtonEmpty,
   EuiFlexGroup,
   EuiFlexItem,
+  EuiFlyout,
+  EuiFlyoutBody,
+  EuiFlyoutHeader,
   EuiIcon,
   EuiPopover,
   EuiSpacer,
+  EuiText,
+  EuiTitle,
   OnRefreshProps,
   OnTimeChangeProps,
+  useGeneratedHtmlId,
 } from "@elastic/eui";
 import React, { useState } from "react";
 import { CommonSearchField } from "../../shared-component/search-field/commonSearchField";
@@ -33,6 +39,8 @@ export const Landing: React.FC = () => {
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(4);
   const [showPerPageOptions, setShowPerPageOptions] = useState(true);
+
+  const [isFlyoutVisible, setIsFlyoutVisible] = useState(false);
 
   const users = [
     {
@@ -121,12 +129,12 @@ export const Landing: React.FC = () => {
     {
       field: "version",
       name: "Version",
-      render: (version: "string") => <>{version}</>,
+      render: (version: string) => <>{version}</>,
     },
     {
       field: "createdBy",
       name: "Created By",
-      render: (createdBy: "string") => <>{createdBy}</>,
+      render: (createdBy: string) => <>{createdBy}</>,
     },
     {
       field: "createdAt",
@@ -154,7 +162,7 @@ export const Landing: React.FC = () => {
             >
               <EuiFlexGroup>
                 <EuiFlexItem>
-                  <EuiButtonEmpty iconType="pencil">Edit</EuiButtonEmpty>
+                  <EuiButtonEmpty iconType="pencil"  onClick={() => setIsFlyoutVisible(true)}>Edit</EuiButtonEmpty>
                 </EuiFlexItem>
                 <EuiFlexItem>
                   <EuiButtonEmpty iconType="trash" color="danger">
@@ -204,10 +212,47 @@ export const Landing: React.FC = () => {
     pageSizeOptions: [10, 0],
     showPerPageOptions,
   };
+
+
+  //Flyout 
+
+  const simpleFlyoutTitleId = useGeneratedHtmlId({
+    prefix: 'simpleFlyoutTitle',
+  });
+  let flyout;
+  if (isFlyoutVisible) {
+    flyout = (
+      <EuiFlyout
+        ownFocus
+        onClose={() => setIsFlyoutVisible(false)}
+        size='s'
+        aria-labelledby={simpleFlyoutTitleId}
+      >
+        <EuiFlyoutHeader hasBorder>
+          <EuiTitle size="m">
+            <h2 id={simpleFlyoutTitleId}>A typical flyout</h2>
+          </EuiTitle>
+        </EuiFlyoutHeader>
+        <EuiFlyoutBody>
+          <EuiText>
+            <p>
+              Edit Your Table Data
+            </p>
+          </EuiText>
+          
+        </EuiFlyoutBody>
+      </EuiFlyout>
+    );
+  }
   return (
     <>
       <EuiFlexGroup direction="column" className="main-div">
         <EuiFlexGroup>
+          <EuiFlexItem>
+            <EuiText>Model</EuiText>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+        <EuiFlexGroup className="top-div">
           <EuiFlexGroup>
             <EuiFlexItem>
               <CommonSearchField placeholder="Enter your Data" />
@@ -225,9 +270,10 @@ export const Landing: React.FC = () => {
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
               <div>
-                <CommonFilter color="primary" title="Filter" />
+                <CommonFilter color="primary" title="Filter"/>
               </div>
             </EuiFlexItem>
+            {flyout}
           </EuiFlexGroup>
         </EuiFlexGroup>
         <EuiFlexGroup>

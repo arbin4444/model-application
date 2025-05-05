@@ -1,31 +1,34 @@
-import { EuiSuperDatePicker, OnRefreshProps, OnTimeChangeProps } from '@elastic/eui'
-import React from 'react'
+import {
+  EuiSuperDatePicker,
+  OnRefreshProps,
+  OnTimeChangeProps,
+} from "@elastic/eui";
+import React from "react";
 
-interface CommonSuperDatePickerProps{
-    isLoading : boolean;
-    start : string;
-    end : string;
-    onTimeChange : (props: OnTimeChangeProps)=>void;
-    onRefresh : (props: OnRefreshProps)=>void;
+interface CommonSuperDatePickerProps {
+  isLoading: boolean;
+  start: string;
+  end: string;
+  onTimeChange: (props: OnTimeChangeProps) => void;
+  onRefresh: (props: OnRefreshProps) => void;
 }
 
-export const CommonSuperDatePicker:React.FC<CommonSuperDatePickerProps>=({
-    isLoading,
-    start,
-    end,
-    onTimeChange,
-    onRefresh
-})=>{
-    return(
-        <>
-        <EuiSuperDatePicker
-        className='superdatepicker'
-            isLoading={isLoading}
-            start={start}
-            end={end}
-            onTimeChange={onTimeChange}
-            onRefresh={onRefresh}
-        />
-        </>
-    )
-}
+export const CommonSuperDatePicker: React.FC<CommonSuperDatePickerProps> = ({
+  isLoading,
+  start,
+  end,
+  onTimeChange,
+  onRefresh,
+}) => {
+  return (
+    <div className="common-superDatePicker">
+      <EuiSuperDatePicker
+        isLoading={isLoading}
+        start={start}
+        end={end}
+        onTimeChange={onTimeChange}
+        onRefresh={onRefresh}
+      />
+    </div>
+  );
+};
