@@ -78,3 +78,22 @@ css-1drqwgc-euiFlexGroup-responsive-l-flexStart-stretch-row {
 .common-table .css-ykrjwq-euiTableCellContent-euiTableHeaderCell__content{
   margin : 10px 0px 10px 0px;
 }
+.main-div .css-1n6n1v5-euiText-m{
+  font-size: 28px;
+  font-weight: 700;
+}
+.flyout-header .css-f3huy-euiTitle-m{
+  font-size: 24px;
+  font-weight: 700;
+}
+.flyout-body .css-1n6n1v5-euiText-m{
+  font-size: 14px;
+  font-weight: 600;
+}
+.name-fieldText ,css-1fmsyvb-euiFormControlLayout__childrenWrapper{
+  margin : 0 0 0 30px;
+}
+.version-fieldText ,css-1fmsyvb-euiFormControlLayout__childrenWrapper{
+  margin : 0 0 0 22px;
+}
+

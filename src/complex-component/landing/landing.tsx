@@ -1,11 +1,14 @@
 import {
   Criteria,
   EuiBasicTableColumn,
+  EuiButton,
   EuiButtonEmpty,
+  EuiFieldText,
   EuiFlexGroup,
   EuiFlexItem,
   EuiFlyout,
   EuiFlyoutBody,
+  EuiFlyoutFooter,
   EuiFlyoutHeader,
   EuiIcon,
   EuiPopover,
@@ -41,6 +44,7 @@ export const Landing: React.FC = () => {
   const [showPerPageOptions, setShowPerPageOptions] = useState(true);
 
   const [isFlyoutVisible, setIsFlyoutVisible] = useState(false);
+  const [editFlyoutData, setEditFlyoutData] = useState<User | null>(null);
 
   const users = [
     {
@@ -162,7 +166,12 @@ export const Landing: React.FC = () => {
             >
               <EuiFlexGroup>
                 <EuiFlexItem>
-                  <EuiButtonEmpty iconType="pencil"  onClick={() => setIsFlyoutVisible(true)}>Edit</EuiButtonEmpty>
+                  <EuiButtonEmpty
+                    iconType="pencil"
+                    onClick={() => handleEditFlyout(item.sn)}
+                  >
+                    Edit
+                  </EuiButtonEmpty>
                 </EuiFlexItem>
                 <EuiFlexItem>
                   <EuiButtonEmpty iconType="trash" color="danger">
@@ -213,37 +222,82 @@ export const Landing: React.FC = () => {
     showPerPageOptions,
   };
 
-
-  //Flyout 
+  //Flyout
 
   const simpleFlyoutTitleId = useGeneratedHtmlId({
-    prefix: 'simpleFlyoutTitle',
+    prefix: "simpleFlyoutTitle",
   });
+  const handleEditFlyout = (sn: number) => {
+    const userEditSn = users.find((user) => user.sn === sn);
+    setEditFlyoutData(userEditSn || null);
+    setIsFlyoutVisible(true);
+  };
   let flyout;
-  if (isFlyoutVisible) {
+  if (isFlyoutVisible && editFlyoutData) {
     flyout = (
       <EuiFlyout
         ownFocus
         onClose={() => setIsFlyoutVisible(false)}
-        size='s'
+        size="s"
         aria-labelledby={simpleFlyoutTitleId}
       >
-        <EuiFlyoutHeader hasBorder>
+        <EuiFlyoutHeader hasBorder  className="flyout-header">
           <EuiTitle size="m">
-            <h2 id={simpleFlyoutTitleId}>A typical flyout</h2>
+            <h2 id={simpleFlyoutTitleId}>Edit</h2>
           </EuiTitle>
         </EuiFlyoutHeader>
-        <EuiFlyoutBody>
-          <EuiText>
-            <p>
-              Edit Your Table Data
-            </p>
-          </EuiText>
-          
+        <EuiFlyoutBody className="flyout-body">
+          <EuiSpacer size="m" />
+          <EuiFlexGroup alignItems="center">
+            <EuiFlexItem grow={false}>
+              <EuiText>Name</EuiText>
+            </EuiFlexItem>
+            <EuiFlexItem grow={false}>
+              <EuiFieldText className= "name-fieldText" value={editFlyoutData.name} />
+            </EuiFlexItem>
+          </EuiFlexGroup>
+          <EuiSpacer size="m" />
+          <EuiFlexGroup alignItems="center">
+            <EuiFlexItem grow={false}>
+              <EuiText>Version</EuiText>
+            </EuiFlexItem>
+            <EuiFlexItem grow={false}>
+              <EuiFieldText className= "version-fieldText" value={editFlyoutData.version} />
+            </EuiFlexItem>
+          </EuiFlexGroup>
+          <EuiSpacer size="m" />
+          <EuiFlexGroup alignItems="center">
+            <EuiFlexItem grow={false}>
+              <EuiText>Created By</EuiText>
+            </EuiFlexItem>
+            <EuiFlexItem grow={false}>
+              <EuiFieldText value={editFlyoutData.createdBy} />
+            </EuiFlexItem>
+          </EuiFlexGroup>
+          <EuiSpacer size="m" />
+          <EuiFlexGroup alignItems="center">
+            <EuiFlexItem grow={false}>
+              <EuiText>Created At</EuiText>
+            </EuiFlexItem>
+            <EuiFlexItem grow={false}>
+              <EuiFieldText value={editFlyoutData.createdAt} />
+            </EuiFlexItem>
+          </EuiFlexGroup>
         </EuiFlyoutBody>
+        <EuiFlyoutFooter>
+          <EuiFlexGroup justifyContent="spaceBetween">
+            <EuiFlexItem grow={false}>
+              <EuiButtonEmpty iconType="cross" onClick={() => setIsFlyoutVisible(false)}>Cancel</EuiButtonEmpty>
+            </EuiFlexItem>
+            <EuiFlexItem grow={false}>
+              <CommonFilter color="success" title="Update" />
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        </EuiFlyoutFooter>
       </EuiFlyout>
     );
   }
+
   return (
     <>
       <EuiFlexGroup direction="column" className="main-div">
@@ -270,7 +324,7 @@ export const Landing: React.FC = () => {
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
               <div>
-                <CommonFilter color="primary" title="Filter"/>
+                <CommonFilter color="primary" title="Filter" />
               </div>
             </EuiFlexItem>
             {flyout}
