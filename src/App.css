@@ -90,10 +90,16 @@ css-1drqwgc-euiFlexGroup-responsive-l-flexStart-stretch-row {
   font-size: 14px;
   font-weight: 600;
 }
-.name-fieldText ,css-1fmsyvb-euiFormControlLayout__childrenWrapper{
+.table-title{
+  width:34%!important;
+}
+.table-field{
+  width:66%!important;
+}
+/* .name-fieldText ,css-1fmsyvb-euiFormControlLayout__childrenWrapper{
   margin : 0 0 0 30px;
 }
 .version-fieldText ,css-1fmsyvb-euiFormControlLayout__childrenWrapper{
   margin : 0 0 0 22px;
-}
+} */
 
