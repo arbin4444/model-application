@@ -20,11 +20,13 @@ import {
   OnTimeChangeProps,
   useGeneratedHtmlId,
 } from "@elastic/eui";
-import React, { useEffect, useState } from "react";
+
+import React, { useState } from "react";
 import { CommonSearchField } from "../../shared-component/search-field/commonSearchField";
 import { CommonSuperDatePicker } from "../../shared-component/superdatepicker/commonSuperDatePicker";
 import { CommonFilter } from "../../shared-component/filter/commonFilter";
 import { CommonTable } from "../../shared-component/table/commonTable";
+import { CommonToast } from "../../shared-component/toast/commonToast";
 export interface User {
   sn: number;
   name: string;
@@ -32,6 +34,16 @@ export interface User {
   createdBy: string;
   createdAt: string;
 }
+
+interface Toast {
+  id?: string | undefined | any;
+  title?: string;
+  color?: "success" | "danger" | "primary" | "warning"; 
+  text?: any;
+  toastLifeTimeMs?: number;
+}
+
+
 
 export const Landing: React.FC = () => {
   const [users, setUsers] = useState<User[]>([
@@ -101,13 +113,14 @@ export const Landing: React.FC = () => {
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [deleteUserId, setDeleteUserId] = useState<number | null>(null);
-  const closeModal = () => setIsModalVisible(false);
-  const showModal = (sn:number) => {setDeleteUserId(sn);setIsModalVisible(true);};
-  const modalTitleId = useGeneratedHtmlId();
+ 
 
   const [searchName,setSearchName]=useState<string>("");
   const [isClearable, setIsClearable] = useState<boolean>(true);
   const [filteredData, setFilteredData] = useState<User[] | null>(null);
+
+  const [updateToasts, setUpdateToasts] = useState<Toast[]>([]);
+  const [deleteToasts, setDeleteToasts] = useState<Toast[]>([]);
 
   // const users = [
   //   {
@@ -161,6 +174,10 @@ export const Landing: React.FC = () => {
   //   },
   // ];
 
+   const closeModal = () => setIsModalVisible(false);
+  const showModal = (sn:number) => {setDeleteUserId(sn);setIsModalVisible(true);};
+  const modalTitleId = useGeneratedHtmlId();
+
   const onTimeChange = ({ start, end }: OnTimeChangeProps) => {
     setStart(start);
     setEnd(end);
@@ -189,6 +206,7 @@ export const Landing: React.FC = () => {
     );
     setUsers([...filteredUser]);
     setIsModalVisible(false);
+    handleDeleteToast();
   };
   const columns: Array<EuiBasicTableColumn<User>> = [
     {
@@ -322,6 +340,7 @@ export const Landing: React.FC = () => {
     showPerPageOptions,
   };
 
+
   //Flyout
   const handleUpdateUserData = () => {
     if (editFlyoutData) {
@@ -330,6 +349,7 @@ export const Landing: React.FC = () => {
           user.sn === editFlyoutData.sn ? editFlyoutData : user
         )
       );
+      handleUpdateToast();
       setIsFlyoutVisible(false);
     }
   };
@@ -518,6 +538,69 @@ export const Landing: React.FC = () => {
   //   return ()=> clearTimeout(handleSearchUserName);
   // },[searchName,users]);
 
+ //For Toast
+  
+  
+  const handleUpdateToast = () => {
+    const toast = getUpdatedToast();
+    setUpdateToasts((t) => [...t, toast]);
+  };
+  const handleDeleteToast = () => {
+    const toast = getDeletedToast();
+    setDeleteToasts((t) => [...t, toast]);
+  };
+  const removeUpdateToast = (id: string) => {
+    setUpdateToasts((toasts) => toasts.filter((toast) => toast.id !== id));
+  };
+  const removeDeleteToast = (id: string) => {
+    setDeleteToasts((toasts) => toasts.filter((toast) => toast.id !== id));
+  };
+
+  const getUpdatedToast = () => {
+    const toasts:Toast[] = [
+      {
+        title: "Updated Successfully",
+        color: "success",
+        text: <p>Your data is updated successfully</p>,
+      },
+      {
+        title: "Updated Successfully",
+        color: "success",
+        text: <p>Your data is updated successfully</p>,
+      },
+    ];
+    return {
+      id: `toast${Date.now()}`,
+      ...toasts[Math.floor(Math.random() * toasts.length)],
+    };
+  };
+
+  const getDeletedToast = () => {
+    const toasts:Toast[] = [
+      {
+        title: "Deleted Successfully",
+        color: "danger",
+        text: <p>Your data is deleted successfully</p>,
+      },
+      {
+        title: "Updated Successfully",
+        color: "danger",
+        text: <p>Your data is deleted successfully</p>,
+      },
+    ];
+    return {
+      id: `toast${Date.now()}`,
+      ...toasts[Math.floor(Math.random() * toasts.length)],
+    };
+  };
+
+  const dismissUpdateToast = (toast:Toast) => {
+    removeUpdateToast(toast.id);
+  }
+  const dismissDeleteToast = (toast:Toast) => {
+    removeDeleteToast(toast.id);
+  }
+
 
 
   return (
@@ -566,6 +649,21 @@ export const Landing: React.FC = () => {
             />
           </EuiFlexItem>
         </EuiFlexGroup>
+        {/* <EuiGlobalToastList
+           toasts={updateToasts}
+           dismissToast={(toast) => removeToast(toast.id)}
+           toastLifeTimeMs={5000}
+      /> */}
+     <CommonToast
+        toasts={updateToasts}
+        dismissToast={dismissUpdateToast}
+        toastLifeTimeMs={5000}
+      />  
+      <CommonToast
+        toasts={deleteToasts}
+        dismissToast={dismissDeleteToast}
+        toastLifeTimeMs={5000}
+      />    
       </EuiFlexGroup>
     </>
   );
