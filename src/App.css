@@ -92,14 +92,14 @@ css-1drqwgc-euiFlexGroup-responsive-l-flexStart-stretch-row {
 }
 .table-title{
   width:34%!important;
+ 
 }
 .table-field{
   width:66%!important;
+  
 }
-/* .name-fieldText ,css-1fmsyvb-euiFormControlLayout__childrenWrapper{
-  margin : 0 0 0 30px;
+.common-fieldText .css-k0u44b-euiFormControlLayout{
+  margin: 10px 0px 10px 0px;
 }
-.version-fieldText ,css-1fmsyvb-euiFormControlLayout__childrenWrapper{
-  margin : 0 0 0 22px;
-} */
+
 

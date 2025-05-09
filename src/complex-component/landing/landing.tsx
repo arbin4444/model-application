@@ -1,21 +1,14 @@
 import {
   Criteria,
   EuiBasicTableColumn,
-  EuiButton,
   EuiButtonEmpty,
   EuiConfirmModal,
   EuiFieldText,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiFlyout,
-  EuiFlyoutBody,
-  EuiFlyoutFooter,
-  EuiFlyoutHeader,
   EuiIcon,
   EuiPopover,
-  EuiSpacer,
   EuiText,
-  EuiTitle,
   OnRefreshProps,
   OnTimeChangeProps,
   useGeneratedHtmlId,
@@ -27,6 +20,9 @@ import { CommonSuperDatePicker } from "../../shared-component/superdatepicker/co
 import { CommonFilter } from "../../shared-component/filter/commonFilter";
 import { CommonTable } from "../../shared-component/table/commonTable";
 import { CommonToast } from "../../shared-component/toast/commonToast";
+import { CommonFlyout } from "../../shared-component/flyout/commonFlyout";
+import { CommonButtonEmpty } from "../../shared-component/buttonEmpty/commonButtonEmpty";
+import { CommonFieldText } from "../../shared-component/fieldText/commonFieldText";
 export interface User {
   sn: number;
   name: string;
@@ -38,12 +34,10 @@ export interface User {
 interface Toast {
   id?: string | undefined | any;
   title?: string;
-  color?: "success" | "danger" | "primary" | "warning"; 
+  color?: "success" | "danger" | "primary" | "warning";
   text?: any;
   toastLifeTimeMs?: number;
 }
-
-
 
 export const Landing: React.FC = () => {
   const [users, setUsers] = useState<User[]>([
@@ -113,9 +107,8 @@ export const Landing: React.FC = () => {
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [deleteUserId, setDeleteUserId] = useState<number | null>(null);
- 
 
-  const [searchName,setSearchName]=useState<string>("");
+  const [searchName, setSearchName] = useState<string>("");
   const [isClearable, setIsClearable] = useState<boolean>(true);
   const [filteredData, setFilteredData] = useState<User[] | null>(null);
 
@@ -174,8 +167,11 @@ export const Landing: React.FC = () => {
   //   },
   // ];
 
-   const closeModal = () => setIsModalVisible(false);
-  const showModal = (sn:number) => {setDeleteUserId(sn);setIsModalVisible(true);};
+  const closeModal = () => setIsModalVisible(false);
+  const showModal = (sn: number) => {
+    setDeleteUserId(sn);
+    setIsModalVisible(true);
+  };
   const modalTitleId = useGeneratedHtmlId();
 
   const onTimeChange = ({ start, end }: OnTimeChangeProps) => {
@@ -199,11 +195,8 @@ export const Landing: React.FC = () => {
     setIsLoading(false);
   };
 
-
-  const handleDeleteModal = (sn:number) => {
-    let filteredUser = users.filter(
-      (users) => users.sn !== deleteUserId
-    );
+  const handleDeleteModal = () => {
+    let filteredUser = users.filter((users) => users.sn !== deleteUserId);
     setUsers([...filteredUser]);
     setIsModalVisible(false);
     handleDeleteToast();
@@ -255,46 +248,39 @@ export const Landing: React.FC = () => {
             >
               <EuiFlexGroup direction="column">
                 <EuiFlexItem>
-                  <EuiButtonEmpty
+                  <CommonButtonEmpty
                     iconType="pencil"
                     onClick={() => {
                       handleEditFlyout(item.sn);
                       closePopover();
                     }}
-                  >
-                    Edit
-                  </EuiButtonEmpty>
+                    title="Edit"
+                  />
                 </EuiFlexItem>
                 <EuiFlexItem>
-                  <EuiButtonEmpty
+                  <CommonButtonEmpty
                     iconType="trash"
                     color="danger"
-                    onClick={() =>
-                      showModal(item.sn)
-                      
-                    }
-                     
-                    
-                  >
-                    Delete
-                  </EuiButtonEmpty>
+                    onClick={() => {
+                      showModal(item.sn);
+                    }}
+                    title="Delete"
+                  />
                   {isModalVisible && (
-        <EuiConfirmModal
-          aria-labelledby={modalTitleId}
-          style={{ width: 600 }}
-          title="Are you sure ?"
-          titleProps={{ id: modalTitleId }}
-          onCancel={closeModal}
-          onConfirm={() => handleDeleteModal(item.sn)}
-          cancelButtonText="Cancel"
-          confirmButtonText="Delete"
-          defaultFocusedButton="confirm"
-        >
-          <p>
-            Users current data will be permanently deleted.
-          </p>
-        </EuiConfirmModal>
-      )}
+                    <EuiConfirmModal
+                      aria-labelledby={modalTitleId}
+                      style={{ width: 600 }}
+                      title="Are you sure ?"
+                      titleProps={{ id: modalTitleId }}
+                      onCancel={closeModal}
+                      onConfirm={() => handleDeleteModal()}
+                      cancelButtonText="Cancel"
+                      confirmButtonText="Delete"
+                      defaultFocusedButton="confirm"
+                    >
+                      <p>Users current data will be permanently deleted.</p>
+                    </EuiConfirmModal>
+                  )}
                 </EuiFlexItem>
               </EuiFlexGroup>
             </EuiPopover>
@@ -330,7 +316,11 @@ export const Landing: React.FC = () => {
       totalItemCount: users.length,
     };
   };
-  const { pageOfItems, totalItemCount } = findUsers(filteredData ?? users, pageIndex, pageSize);
+  const { pageOfItems, totalItemCount } = findUsers(
+    filteredData ?? users,
+    pageIndex,
+    pageSize
+  );
 
   const pagination = {
     pageIndex,
@@ -339,7 +329,6 @@ export const Landing: React.FC = () => {
     pageSizeOptions: [10, 0],
     showPerPageOptions,
   };
-
 
   //Flyout
   const handleUpdateUserData = () => {
@@ -353,9 +342,9 @@ export const Landing: React.FC = () => {
       setIsFlyoutVisible(false);
     }
   };
-  const simpleFlyoutTitleId = useGeneratedHtmlId({
-    prefix: "simpleFlyoutTitle",
-  });
+  // const simpleFlyoutTitleId = useGeneratedHtmlId({
+  //   prefix: "simpleFlyoutTitle",
+  // });
   const handleEditFlyout = (sn: number) => {
     const userEditSn = users.find((user) => user.sn === sn);
     setEditFlyoutData(userEditSn || null);
@@ -364,28 +353,22 @@ export const Landing: React.FC = () => {
   let flyout;
   if (isFlyoutVisible && editFlyoutData) {
     flyout = (
-      <EuiFlyout
-        ownFocus
+      <CommonFlyout
+        ownFocus={true}
         onClose={() => setIsFlyoutVisible(false)}
         size="s"
-        aria-labelledby={simpleFlyoutTitleId}
-      >
-        <EuiFlyoutHeader hasBorder className="flyout-header">
-          <EuiTitle size="m">
-            <h2 id={simpleFlyoutTitleId}>Edit</h2>
-          </EuiTitle>
-        </EuiFlyoutHeader>
-        <EuiFlyoutBody className="flyout-body">
-          <EuiSpacer size="m" />
+        hasBorder={true}
+        title="Edit"
+        body={
           <table>
             <tr>
               <td className="table-title">
                 <EuiText>Name</EuiText>
               </td>
               <td className="table-field">
-                <EuiFieldText
+                <CommonFieldText
                   value={editFlyoutData.name}
-                  onChange={(e) =>
+                  onChange={(e: { target: { value: any } }) =>
                     setEditFlyoutData({
                       ...editFlyoutData,
                       name: e.target.value,
@@ -395,13 +378,13 @@ export const Landing: React.FC = () => {
               </td>
             </tr>
             <tr>
-              <td>
+              <td className="table-title">
                 <EuiText>Version</EuiText>
               </td>
-              <td>
-                <EuiFieldText
+              <td className="table-field">
+                <CommonFieldText
                   value={editFlyoutData.version}
-                  onChange={(e) =>
+                  onChange={(e: { target: { value: any } }) =>
                     setEditFlyoutData({
                       ...editFlyoutData,
                       version: e.target.value,
@@ -411,13 +394,13 @@ export const Landing: React.FC = () => {
               </td>
             </tr>
             <tr>
-              <td>
+              <td className="table-title">
                 <EuiText>Created By</EuiText>
               </td>
-              <td>
-                <EuiFieldText
+              <td className="table-field">
+                <CommonFieldText
                   value={editFlyoutData.createdBy}
-                  onChange={(e) =>
+                  onChange={(e: { target: { value: any } }) =>
                     setEditFlyoutData({
                       ...editFlyoutData,
                       createdBy: e.target.value,
@@ -427,13 +410,13 @@ export const Landing: React.FC = () => {
               </td>
             </tr>
             <tr>
-              <td>
+              <td className="table-title">
                 <EuiText>Created At</EuiText>
               </td>
-              <td>
-                <EuiFieldText
+              <td className="table-field">
+                <CommonFieldText
                   value={editFlyoutData.createdAt}
-                  onChange={(e) =>
+                  onChange={(e: { target: { value: any } }) =>
                     setEditFlyoutData({
                       ...editFlyoutData,
                       createdAt: e.target.value,
@@ -443,7 +426,107 @@ export const Landing: React.FC = () => {
               </td>
             </tr>
           </table>
-          {/* <EuiFlexGroup alignItems="center">
+        }
+        footer={
+          <EuiFlexGroup justifyContent="spaceBetween">
+            <EuiFlexItem grow={false}>
+              <CommonButtonEmpty
+                iconType="cross"
+                onClick={() => setIsFlyoutVisible(false)}
+                title="cancel"
+              />
+            </EuiFlexItem>
+            <EuiFlexItem grow={false}>
+              <CommonFilter
+                color="success"
+                title="Update"
+                onClick={handleUpdateUserData}
+              />
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        }
+      />
+    );
+  }
+  // <EuiFlyout
+  //   ownFocus
+  //   onClose={() => setIsFlyoutVisible(false)}
+  //   size="s"
+
+  // >
+  //   <EuiFlyoutHeader hasBorder className="flyout-header">
+  //     <EuiTitle size="m">
+  //       <h2 id={simpleFlyoutTitleId}>Edit</h2>
+  //     </EuiTitle>
+  //   </EuiFlyoutHeader>
+  //   <EuiFlyoutBody className="flyout-body">
+  //     <table>
+  //       <tr>
+  //         <td className="table-title">
+  //           <EuiText>Name</EuiText>
+  //         </td>
+  //         <td className="table-field">
+  //           <EuiFieldText
+  //             value={editFlyoutData.name}
+  //             onChange={(e) =>
+  //               setEditFlyoutData({
+  //                 ...editFlyoutData,
+  //                 name: e.target.value,
+  //               })
+  //             }
+  //           />
+  //         </td>
+  //       </tr>
+  //       <tr>
+  //         <td>
+  //           <EuiText>Version</EuiText>
+  //         </td>
+  //         <td>
+  //           <EuiFieldText
+  //             value={editFlyoutData.version}
+  //             onChange={(e) =>
+  //               setEditFlyoutData({
+  //                 ...editFlyoutData,
+  //                 version: e.target.value,
+  //               })
+  //             }
+  //           />
+  //         </td>
+  //       </tr>
+  //       <tr>
+  //         <td>
+  //           <EuiText>Created By</EuiText>
+  //         </td>
+  //         <td>
+  //           <EuiFieldText
+  //             value={editFlyoutData.createdBy}
+  //             onChange={(e) =>
+  //               setEditFlyoutData({
+  //                 ...editFlyoutData,
+  //                 createdBy: e.target.value,
+  //               })
+  //             }
+  //           />
+  //         </td>
+  //       </tr>
+  //       <tr>
+  //         <td>
+  //           <EuiText>Created At</EuiText>
+  //         </td>
+  //         <td>
+  //           <EuiFieldText
+  //             value={editFlyoutData.createdAt}
+  //             onChange={(e) =>
+  //               setEditFlyoutData({
+  //                 ...editFlyoutData,
+  //                 createdAt: e.target.value,
+  //               })
+  //             }
+  //           />
+  //         </td>
+  //       </tr>
+  //     </table>
+  /* <EuiFlexGroup alignItems="center">
             <EuiFlexItem grow={false}>
               <EuiText>Name</EuiText>
             </EuiFlexItem>
@@ -477,49 +560,48 @@ export const Landing: React.FC = () => {
             <EuiFlexItem >
               <EuiFieldText value={editFlyoutData.createdAt} />
             </EuiFlexItem>
-          </EuiFlexGroup> */}
-        </EuiFlyoutBody>
-        <EuiFlyoutFooter>
-          <EuiFlexGroup justifyContent="spaceBetween">
-            <EuiFlexItem grow={false}>
-              <EuiButtonEmpty
-                iconType="cross"
-                onClick={() => setIsFlyoutVisible(false)}
-              >
-                Cancel
-              </EuiButtonEmpty>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
-              <CommonFilter
-                color="success"
-                title="Update"
-                onClick={handleUpdateUserData}
-              />
-            </EuiFlexItem>
-          </EuiFlexGroup>
-        </EuiFlyoutFooter>
-      </EuiFlyout>
-    );
-  }
+          </EuiFlexGroup> */
+  //       </EuiFlyoutBody>
+  //       <EuiFlyoutFooter>
+  //         <EuiFlexGroup justifyContent="spaceBetween">
+  //           <EuiFlexItem grow={false}>
+  //             <EuiButtonEmpty
+  //               iconType="cross"
+  //               onClick={() => setIsFlyoutVisible(false)}
+  //             >
+  //               Cancel
+  //             </EuiButtonEmpty>
+  //           </EuiFlexItem>
+  //           <EuiFlexItem grow={false}>
+  //             <CommonFilter
+  //               color="success"
+  //               title="Update"
+  //               onClick={handleUpdateUserData}
+  //             />
+  //           </EuiFlexItem>
+  //         </EuiFlexGroup>
+  //       </EuiFlyoutFooter>
+  //     </EuiFlyout>
+  //   );
+  // }
 
   //For Filtering Table data
-  const handleSearchName=(e: { preventDefault: () => void; target: { value: React.SetStateAction<string>; }; })=>{
+  const handleSearchName = (e: {
+    preventDefault: () => void;
+    target: { value: React.SetStateAction<string> };
+  }) => {
     e.preventDefault();
-    setSearchName(e.target.value)
-  }
-
+    setSearchName(e.target.value);
+  };
 
   const handleSearchUserName = () => {
-         if (!searchName.trim()) {
-           setFilteredData(null);
-           return;
-         }
-         const filterSearchedName = users.filter(
-         (name) => name.name === searchName
-       );
-       setFilteredData([...filterSearchedName]);
-      }
-    
+    if (!searchName.trim()) {
+      setFilteredData(null);
+      return;
+    }
+    const filterSearchedName = users.filter((name) => name.name === searchName);
+    setFilteredData([...filterSearchedName]);
+  };
 
   // Debouncing Method
 
@@ -538,9 +620,8 @@ export const Landing: React.FC = () => {
   //   return ()=> clearTimeout(handleSearchUserName);
   // },[searchName,users]);
 
- //For Toast
-  
-  
+  //For Toast
+
   const handleUpdateToast = () => {
     const toast = getUpdatedToast();
     setUpdateToasts((t) => [...t, toast]);
@@ -557,7 +638,7 @@ export const Landing: React.FC = () => {
   };
 
   const getUpdatedToast = () => {
-    const toasts:Toast[] = [
+    const toasts: Toast[] = [
       {
         title: "Updated Successfully",
         color: "success",
@@ -576,14 +657,14 @@ export const Landing: React.FC = () => {
   };
 
   const getDeletedToast = () => {
-    const toasts:Toast[] = [
+    const toasts: Toast[] = [
       {
         title: "Deleted Successfully",
         color: "danger",
         text: <p>Your data is deleted successfully</p>,
       },
       {
-        title: "Updated Successfully",
+        title: "Deleted Successfully",
         color: "danger",
         text: <p>Your data is deleted successfully</p>,
       },
@@ -594,14 +675,12 @@ export const Landing: React.FC = () => {
     };
   };
 
-  const dismissUpdateToast = (toast:Toast) => {
+  const dismissUpdateToast = (toast: Toast) => {
     removeUpdateToast(toast.id);
-  }
-  const dismissDeleteToast = (toast:Toast) => {
+  };
+  const dismissDeleteToast = (toast: Toast) => {
     removeDeleteToast(toast.id);
-  }
-
-
+  };
 
   return (
     <>
@@ -614,7 +693,12 @@ export const Landing: React.FC = () => {
         <EuiFlexGroup className="top-div">
           <EuiFlexGroup>
             <EuiFlexItem>
-              <CommonSearchField value={searchName} isClearable={isClearable} onChange={handleSearchName} placeholder="Enter your Data" />
+              <CommonSearchField
+                value={searchName}
+                isClearable={isClearable}
+                onChange={handleSearchName}
+                placeholder="Enter your Data"
+              />
             </EuiFlexItem>
           </EuiFlexGroup>
           <EuiFlexGroup justifyContent="flexEnd">
@@ -629,7 +713,11 @@ export const Landing: React.FC = () => {
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
               <div>
-                <CommonFilter color="primary" title="Filter" onClick={handleSearchUserName}/>
+                <CommonFilter
+                  color="primary"
+                  title="Filter"
+                  onClick={handleSearchUserName}
+                />
               </div>
             </EuiFlexItem>
             {flyout}
@@ -654,16 +742,16 @@ export const Landing: React.FC = () => {
            dismissToast={(toast) => removeToast(toast.id)}
            toastLifeTimeMs={5000}
       /> */}
-     <CommonToast
-        toasts={updateToasts}
-        dismissToast={dismissUpdateToast}
-        toastLifeTimeMs={5000}
-      />  
-      <CommonToast
-        toasts={deleteToasts}
-        dismissToast={dismissDeleteToast}
-        toastLifeTimeMs={5000}
-      />    
+        <CommonToast
+          toasts={updateToasts}
+          dismissToast={dismissUpdateToast}
+          toastLifeTimeMs={5000}
+        />
+        <CommonToast
+          toasts={deleteToasts}
+          dismissToast={dismissDeleteToast}
+          toastLifeTimeMs={5000}
+        />
       </EuiFlexGroup>
     </>
   );
