@@ -368,7 +368,7 @@ export const Landing: React.FC = () => {
               <td className="table-field">
                 <CommonFieldText
                   value={editFlyoutData.name}
-                  onChange={(e: { target: { value: any } }) =>
+                  onChange={(e: { target: { value: any; }; }) =>
                     setEditFlyoutData({
                       ...editFlyoutData,
                       name: e.target.value,
